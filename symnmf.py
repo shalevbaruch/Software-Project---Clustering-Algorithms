@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-import mysymnmf
+import symnmf
 import math
 
 
@@ -10,20 +10,22 @@ def main():
     goal = sys.argv[2]
     filepath = sys.argv[3]
     X = readVectors(filepath)
+    result = None
     # print_result(X)
     if goal == 'sym':
-        print_result(mysymnmf.sym(X))
+        result = symnmf.sym(X)
     elif goal == 'ddg':
-        print_result(mysymnmf.ddg(X))
+        result = symnmf.ddg(X)
     elif goal == 'norm':
-        print_result(mysymnmf.norm(X))
+        result = symnmf.norm(X)
     elif goal == 'symnmf':
-        W = mysymnmf.norm(X)
+        W = symnmf.norm(X)
         H = initial_H(W, k)
-        print_result(mysymnmf.symnmf(W, k))
-    else:
+        result = symnmf.symnmf(H, W, k)
+    if result == None:
         print("An Error Has Occurred")
         return 1
+    print_result(result)
     return 0
          
     
@@ -42,8 +44,8 @@ def print_result(centroidsArray):
 
 
 def readVectors(fileName):
-    vectors_numpy = np.genfromtxt(fileName, delimiter=',', dtype=float)
-    return vectors_numpy
+    vectors = np.genfromtxt(fileName, delimiter=',', dtype=float)
+    return vectors
 
 
 if __name__ == "__main__":
