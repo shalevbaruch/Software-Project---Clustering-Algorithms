@@ -2,6 +2,7 @@
 #include<stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "symnmf.h"
 
 
 int initialize(double *** arr_ptr, int * num_of_coordinates_ptr, int * N_ptr, char* filepath);
