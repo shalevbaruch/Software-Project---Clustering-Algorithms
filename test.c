@@ -3,9 +3,13 @@
 #include <math.h>
 
 int main(){
-    int i = 0;
-    double x = 5;
-    x = pow(0, 1 * 0.5);
-    printf("%f", x);
+    double* x = NULL;
+    if (!x){
+        printf("shalev is right\n");
+    }
+
+    if (x){
+        printf("lior is right!\n");
+    }
 
 }

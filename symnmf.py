@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-import symnmf
+import SymNMF
 import math
 
 
@@ -13,15 +13,15 @@ def main():
     result = None
     # print_result(X)
     if goal == 'sym':
-        result = symnmf.sym(X)
+        result = SymNMF.sym(X)
     elif goal == 'ddg':
-        result = symnmf.ddg(X)
+        result = SymNMF.ddg(X)
     elif goal == 'norm':
-        result = symnmf.norm(X)
+        result = SymNMF.norm(X)
     elif goal == 'symnmf':
-        W = symnmf.norm(X)
+        W = SymNMF.norm(X)
         H = initial_H(W, k)
-        result = symnmf.symnmf(H, W, k)
+        result = SymNMF.symnmf(H, W, k)
     if result == None:
         print("An Error Has Occurred")
         return 1

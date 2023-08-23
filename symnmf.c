@@ -14,6 +14,9 @@ double** ddg_c(double** X, int num_of_coordinates, int N);
 void free_matrix(double** matrix, int num_of_rows);
 double** norm_c(double** X, int num_of_coordinates, int N);
 void print_matrix(double** matrix, int num_of_rows, int num_of_columns);
+double** transpose_matrix(double** matrix, int rows, int cols);
+double** update_H(double **H, double** W, int rows, int cols);
+double** subtract_matrix(double** mat1, int rows1, int cols1, double** mat2, int rows2, int cols2);
 
 
 int main(int argc, char* argv[]){
@@ -183,7 +186,8 @@ double** norm_c(double** X, int num_of_coordinates, int N){
    double** similarity_matrix = sym_c(X, num_of_coordinates, N);
    double** diagonal_matrix = ddg_c(X, num_of_coordinates, N);
    double** W;
-   int i; int j;
+   int i; 
+   int j;
    if (similarity_matrix == NULL || diagonal_matrix == NULL){
       return NULL;
    }
@@ -232,11 +236,12 @@ void print_matrix(double** matrix, int num_of_rows, int num_of_columns){
    printf("\n");
 }
 
+
 double** matrix_multiply(double** mat1, int ROWS1, int COLS1, double** mat2, int ROWS2, int COLS2){
    int i;
    int j;
    int k;
-   if (COLS1 != ROWS2){
+   if (COLS1 != ROWS2 || mat1 == NULL || mat2 == NULL){
       return NULL;
    }
    double** result = (double**)malloc(ROWS1*sizeof(double*));
@@ -253,5 +258,102 @@ double** matrix_multiply(double** mat1, int ROWS1, int COLS1, double** mat2, int
    }
    return result;
 }
+
+
+double** update_H(double **H, double** W, int rows, int cols){
+   int i;
+   int j;
+   double** WxH; 
+   double** triple_H;
+   double** new_H = (double**)malloc(rows * sizeof(double*));
+   double** transposed_matrix;
+   double** HxHt;
+   if (!new_H){
+      return NULL;
+   }
+   WxH = matrix_multiply(W,rows, rows, H, rows, cols);  
+   transposed_matrix =  transpose_matrix(H, rows, cols);
+   HxHt = matrix_multiply(H, rows, cols, transposed_matrix, cols, rows);
+   triple_H = matrix_multiply(HxHt, rows, rows, H, rows, cols);
+   if (triple_H == NULL){
+      return NULL;
+   }
+   for(i=0; i<rows;i++){
+      new_H[i] = (double*)malloc(cols*sizeof(double));
+      if (!new_H){
+         return NULL;
+      }
+      for(j=0; j<cols; j++){
+         new_H[i][j] = 0.5 + 0.5 * (WxH[i][j] / triple_H[i][j]);
+      }
+   }
+   free_matrix(WxH, rows);
+   free_matrix(transposed_matrix, cols);
+   free_matrix(HxHt, rows);
+   free_matrix(triple_H, rows);
+   return new_H;
+}
+
+
+double** transpose_matrix(double** matrix, int rows, int cols){
+double** transposed_matrix = (double**) malloc(cols* sizeof(double));
+if (!transposed_matrix){
+   return NULL;
+}
+int i; 
+int j;
+for(i=0; i<cols; i++){
+   transposed_matrix[i] = (double*)malloc(rows*sizeof(double));
+   if (!transposed_matrix[i]){
+      return NULL;
+   }
+   for(j=0; j<rows; j++){
+       transposed_matrix[i][j] = matrix[j][i];
+   }
+}
+return transposed_matrix;
+}
+
+
+double frobenius_norm(double** H, int rows, int cols,double** new_H){
+   int i;
+   int j;
+   double result;
+   double** substructed_matrix = substruct_matrix(new_H, rows, cols, H, rows, cols);
+   if (!substructed_matrix){
+      return -1;
+   }
+   for(i=0; i<rows; i++){
+      for(j=0; j<cols; j++){
+         result += pow(substructed_matrix[i][j], 2);
+      }
+   }
+   free_matrix(substructed_matrix, rows);
+   return sqrt(result);
+}
+
+
+double** subtract_matrix(double** mat1, int rows1, int cols1, double** mat2, int rows2, int cols2){
+   int i;
+   int j;
+   double** result;
+   if (rows1 != rows2 || cols1 != cols2){
+      return NULL;
+   }
+   result = (double**)malloc(rows1 * sizeof(double*));
+   if (!result){
+      return NULL;
+   }
+   for(i=0; i<rows1; i++){
+      result[i] = (double*)malloc(cols1*sizeof(double));
+      if (!result[i]){
+         return NULL;
+      }
+      result[i][j] = mat1[i][j] - mat2[i][j];
+   }
+   return result;
+}
+
+
 
 
