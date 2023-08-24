@@ -10,14 +10,16 @@ def main():
     goal = sys.argv[2]
     filepath = sys.argv[3]
     X = readVectors(filepath)
+    if len(X) == 0:
+        return 0
+    # X = X.tolist()
     result = None
-    # print_result(X)
     if goal == 'sym':
-        result = SymNMF.sym(X, len(X), len(X[0]))
+        result = SymNMF.sym(X)
     elif goal == 'ddg':
-        result = SymNMF.ddg(X, len(X), len(X[0]))
+        result = SymNMF.ddg(X)
     elif goal == 'norm':
-        result = SymNMF.norm(X, len(X), len(X[0]))
+        result = SymNMF.norm(X)
     elif goal == 'symnmf':
         W = SymNMF.norm(X)
         H = initial_H(W, k)

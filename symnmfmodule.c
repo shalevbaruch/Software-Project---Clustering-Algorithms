@@ -2,7 +2,6 @@
 #include <Python.h>
 #include "symnmf.h"
 
-
 static PyObject* symnmf(PyObject *self, PyObject *args);
 static PyObject* sym(PyObject *self, PyObject *args);
 static PyObject* ddg(PyObject *self, PyObject *args);
@@ -12,28 +11,32 @@ PyObject* convert_to_PyObject(double** matrix, int rows, int cols);
 
 
 PyObject* symnmf_ops(PyObject *self, PyObject *args, int command){
-    int k;
+    int num_of_coordinates;
     int N;
     double** datapoints_arr;
     PyObject* inputList;
     PyObject* result;
     double** matrix;
-    if (!PyArg_ParseTuple(args, "Oii", &inputList, &N, &k)) {
+    if (!PyArg_ParseTuple(args, "O", &inputList)) {
         return NULL;  // Parsing failed, return an error
     }
-    datapoints_arr = convert_to_matrix(inputList, N, k);
+    N =  (int)PySequence_Size(inputList);
+    num_of_coordinates = (int)PySequence_Size(PySequence_GetItem(inputList, 0));
+    // printf("N = %d\n", N);
+    // printf("num_of_coordinates = %d\n", num_of_coordinates);
+    datapoints_arr = convert_to_matrix(inputList, N, num_of_coordinates);
     if (!datapoints_arr){
         return NULL;
     }
     switch(command){
         case 0:
-            matrix = sym_c(datapoints_arr, k, N);
+            matrix = sym_c(datapoints_arr, num_of_coordinates, N);
             break;
         case 1:
-            matrix = ddg_c(datapoints_arr, k, N);
+            matrix = ddg_c(datapoints_arr, num_of_coordinates, N);
             break;
         case 2:
-            matrix = norm_c(datapoints_arr, k, N);
+            matrix = norm_c(datapoints_arr, num_of_coordinates, N);
             break;
         default:
             return NULL;
@@ -49,7 +52,21 @@ PyObject* symnmf_ops(PyObject *self, PyObject *args, int command){
 
 
 static PyObject* symnmf(PyObject *self, PyObject *args){
-return NULL;
+    int i, j, k, N;
+    PyObject* inputList1, inputList2, result;
+
+    double** symnmf_matrix, H, W;
+    if (!PyArg_ParseTuple(args, "OOii", &inputList1, &inputList2, &N, &k, &num_of_coordinates)) {
+        return NULL;  // Parsing failed, return an error
+    }
+    H = convert_to_matrix(inputList1, N, k);
+    W = convert_to_matrix(inputList2, N, N);
+    symnmf_matrix = symnmf_c(H, W, N, k);
+    result = convert_to_PyObject(symnmf_matrix, N, k);
+    free_matrix(W, N);
+    free_matrix(H, N);
+    free_matrix(symnmf_matrix, N);
+    return result;
 }
 
 
