@@ -3,12 +3,12 @@
 #include <math.h>
 
 int main(){
-    double* x = NULL;
-    if (!x){
+    double x = -1;
+    if (x){
         printf("shalev is right\n");
     }
 
-    if (x){
+    if (!x){
         printf("lior is right!\n");
     }
 

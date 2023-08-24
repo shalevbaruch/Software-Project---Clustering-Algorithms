@@ -13,15 +13,15 @@ def main():
     result = None
     # print_result(X)
     if goal == 'sym':
-        result = SymNMF.sym(X)
+        result = SymNMF.sym(X, len(X), len(X[0]))
     elif goal == 'ddg':
-        result = SymNMF.ddg(X)
+        result = SymNMF.ddg(X, len(X), len(X[0]))
     elif goal == 'norm':
-        result = SymNMF.norm(X)
+        result = SymNMF.norm(X, len(X), len(X[0]))
     elif goal == 'symnmf':
         W = SymNMF.norm(X)
         H = initial_H(W, k)
-        result = SymNMF.symnmf(H, W, k)
+        result = SymNMF.symnmf(H, W, len(X), k)
     if result == None:
         print("An Error Has Occurred")
         return 1
@@ -29,8 +29,6 @@ def main():
     return 0
          
     
-
-
 def initial_H(W, k):
     m = np.mean(W)
     return np.random.uniform(0,2*math.sqrt(m/k), size=(len(W), k))
