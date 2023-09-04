@@ -52,19 +52,22 @@ PyObject* symnmf_ops(PyObject *self, PyObject *args, int command){
 
 
 static PyObject* symnmf(PyObject *self, PyObject *args){
-    int i, j, k, N;
-    PyObject* inputList1, inputList2, result;
+    int k, N;
+    PyObject *inputList1, *inputList2, *result;
 
-    double** symnmf_matrix, H, W;
-    if (!PyArg_ParseTuple(args, "OOii", &inputList1, &inputList2, &N, &k, &num_of_coordinates)) {
+    double **symnmf_matrix, **H, **W;
+    if (!PyArg_ParseTuple(args, "OOii", &inputList1, &inputList2, &N, &k)) {
         return NULL;  // Parsing failed, return an error
     }
     H = convert_to_matrix(inputList1, N, k);
+    // print_matrix(H, N, k);
+    // printf("done printing initial H\n");
     W = convert_to_matrix(inputList2, N, N);
     symnmf_matrix = symnmf_c(H, W, N, k);
+    // print_matrix(symnmf_matrix, N, k);
+    // printf("done printing symnmf_matrix\n");
     result = convert_to_PyObject(symnmf_matrix, N, k);
     free_matrix(W, N);
-    free_matrix(H, N);
     free_matrix(symnmf_matrix, N);
     return result;
 }

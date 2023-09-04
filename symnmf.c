@@ -54,7 +54,7 @@ int main(int argc, char* argv[]){
       }
    }
 
-   print_matrix(result, N, num_of_coordinates);
+   print_matrix(result, N, N);
    free_matrix(result, N);
    return 0;
 }
@@ -266,7 +266,7 @@ double** update_H(double **H, double** W, int rows, int cols){
    }
    for(i=0; i<rows;i++){
       for(j=0; j<cols; j++){
-         new_H[i][j] = 0.5 + 0.5 * (WxH[i][j] / triple_H[i][j]);
+         new_H[i][j] = H[i][j] * (0.5 + 0.5 * (WxH[i][j] / triple_H[i][j]));
       }
    }
    free_matrix(WxH, rows);
