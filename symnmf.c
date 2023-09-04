@@ -52,9 +52,9 @@ int main(int argc, char* argv[]){
          printf("An Error Has Occurred");
          return 1;
       }
-   }
-
+   }    
    print_matrix(result, N, N);
+   free_matrix(X, N);
    free_matrix(result, N);
    return 0;
 }
@@ -102,6 +102,7 @@ int initialize(double *** arr_ptr, int * num_of_coordinates_ptr, int * N_ptr, ch
    *N_ptr = num_of_datapoints;
    *num_of_coordinates_ptr = num_of_coordinates;
    *arr_ptr = arr;
+   fclose(file);
    return 0; 
 }
 
@@ -179,7 +180,7 @@ double** ddg_c(double** X, int num_of_coordinates, int N){
 double** norm_c(double** X, int num_of_coordinates, int N){
    double** similarity_matrix = sym_c(X, num_of_coordinates, N);
    double** diagonal_matrix = ddg_c(X, num_of_coordinates, N);
-   double** W;
+   double **W, **tmp_W;
    int i; 
    if (similarity_matrix == NULL || diagonal_matrix == NULL){
       return NULL;
@@ -187,8 +188,9 @@ double** norm_c(double** X, int num_of_coordinates, int N){
    for(i=0; i<N; i++){
       diagonal_matrix[i][i] = 1 / pow(diagonal_matrix[i][i], 0.5);
    }
-   W = matrix_multiply(diagonal_matrix, N, N, similarity_matrix, N, N);
-   W = matrix_multiply(W, N, N, diagonal_matrix, N, N);
+   tmp_W = matrix_multiply(diagonal_matrix, N, N, similarity_matrix, N, N);
+   W = matrix_multiply(tmp_W, N, N, diagonal_matrix, N, N);
+   free_matrix(tmp_W, N);
    free_matrix(similarity_matrix, N);
    free_matrix(diagonal_matrix, N);
    return W;
