@@ -6,7 +6,7 @@ from SymNMF import symnmf, norm
 from symnmf import initial_H, readVectors 
 
 
-def distance(vectorA, vectorB):
+def distance(vectorA, vectorB):  # euclidean distance
     return math.sqrt(sum((a - b) ** 2 for (a, b) in zip(vectorA, vectorB)))
 
 
@@ -53,8 +53,6 @@ def main():
     k = int(sys.argv[1])
     X = readVectors(sys.argv[2])
     kmeans_clusters = KMeansAlgorithm(X, k, iterations)
-    # print(kmeans_clusters)
-    # print("done printing clusters")
     distances = pairwise_distances(X, kmeans_clusters)
     kmeans_lables = np.argmin(distances, axis=1)
     kmeans_score = "%.4f" % silhouette_score(X, kmeans_lables)

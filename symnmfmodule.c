@@ -18,12 +18,10 @@ PyObject* symnmf_ops(PyObject *self, PyObject *args, int command){
     PyObject* result;
     double** matrix;
     if (!PyArg_ParseTuple(args, "O", &inputList)) {
-        return NULL;  // Parsing failed, return an error
+        return NULL;  /* Parsing failed, return an error */
     }
     N =  (int)PySequence_Size(inputList);
     num_of_coordinates = (int)PySequence_Size(PySequence_GetItem(inputList, 0));
-    // printf("N = %d\n", N);
-    // printf("num_of_coordinates = %d\n", num_of_coordinates);
     datapoints_arr = convert_to_matrix(inputList, N, num_of_coordinates);
     if (!datapoints_arr){
         return NULL;
@@ -57,15 +55,11 @@ static PyObject* symnmf(PyObject *self, PyObject *args){
 
     double **symnmf_matrix, **H, **W;
     if (!PyArg_ParseTuple(args, "OOii", &inputList1, &inputList2, &N, &k)) {
-        return NULL;  // Parsing failed, return an error
+        return NULL;  /* Parsing failed, return an error */
     }
     H = convert_to_matrix(inputList1, N, k);
-    // print_matrix(H, N, k);
-    // printf("done printing initial H\n");
     W = convert_to_matrix(inputList2, N, N);
     symnmf_matrix = symnmf_c(H, W, N, k);
-    // print_matrix(symnmf_matrix, N, k);
-    // printf("done printing symnmf_matrix\n");
     result = convert_to_PyObject(symnmf_matrix, N, k);
     free_matrix(W, N);
     free_matrix(symnmf_matrix, N);

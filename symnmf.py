@@ -12,7 +12,6 @@ def main():
     X = readVectors(filepath)
     if len(X) == 0:
         return 0
-    # X = X.tolist()
     result = None
     if goal == 'sym':
         result = SymNMF.sym(X)

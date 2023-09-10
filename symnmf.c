@@ -28,9 +28,9 @@ int main(int argc, char* argv[]){
    char* filepath = argv[2];
    int num_of_coordinates;
    int N;
-   double** X = NULL;
-   double** result;
-   if (initialize(&X, &num_of_coordinates, &N, filepath) != 0){
+   double** X = NULL; /* X is the datapoints array*/
+   double** result; /* result is the output*/
+   if (initialize(&X, &num_of_coordinates, &N, filepath) != 0){ 
         printf("An Error Has Occurred");
         return 1;
    }
@@ -76,12 +76,12 @@ int initialize(double *** arr_ptr, int * num_of_coordinates_ptr, int * N_ptr, ch
    while ((nread = getline(&line, &len, file)) != (size_t)-1){
       if (num_of_datapoints == 0){
       for (i = 0; i < nread; i++) {
-         if (line[i] == ',') { /* if we find a comma, increment the count */
+         if (line[i] == ',') { /* If we find a comma, increment the count */
                num_of_coordinates++;
          }
       }
       }
-      if (num_of_datapoints == capacity){
+      if (num_of_datapoints == capacity){ /*If all of the memory of the current array is full, we need to relocate it*/
          if (capacity == 0){
                capacity = 128;
          }
@@ -107,7 +107,7 @@ int initialize(double *** arr_ptr, int * num_of_coordinates_ptr, int * N_ptr, ch
 }
 
 
-void enter_datapoint(double *arr, char* line){
+void enter_datapoint(double *arr, char* line){ /* Copy the datapoint into the array of datapoints*/
     int i = 0;
     int pos = 0;
     while (sscanf(line + pos, "%lf", &arr[i]) == 1) {
@@ -132,7 +132,7 @@ int chr_until_comma(const char * str){
 }
 
 
-double** sym_c(double** X, int num_of_coordinates, int N){ // X is a matrix of size N*num_of_coordinates
+double** sym_c(double** X, int num_of_coordinates, int N){ /* Computing the similarity matrix */
    int i;
    int j;
    double sim_value;
@@ -147,7 +147,7 @@ double** sym_c(double** X, int num_of_coordinates, int N){ // X is a matrix of s
          euc_distance = euclidean_distance(X[i], X[j], num_of_coordinates);
          sim_value = exp(-euc_distance * euc_distance / 2);
          similarity_matrix[i][j] = sim_value;
-         similarity_matrix[j][i] = sim_value; // Copy to the lower triangular part (symmetric property)
+         similarity_matrix[j][i] = sim_value; /* Copy to the lower triangular part (symmetric property) */
       }
 
       similarity_matrix[i][i] = 0;
@@ -156,7 +156,7 @@ double** sym_c(double** X, int num_of_coordinates, int N){ // X is a matrix of s
 }
 
 
-double** ddg_c(double** X, int num_of_coordinates, int N){
+double** ddg_c(double** X, int num_of_coordinates, int N){ /* Computing the diagonal matrix*/
    int i;
    int j;
    double row_sum;
@@ -177,7 +177,7 @@ double** ddg_c(double** X, int num_of_coordinates, int N){
 }
 
 
-double** norm_c(double** X, int num_of_coordinates, int N){
+double** norm_c(double** X, int num_of_coordinates, int N){  /* Computing the normalized similarity matrix */
    double** similarity_matrix = sym_c(X, num_of_coordinates, N);
    double** diagonal_matrix = ddg_c(X, num_of_coordinates, N);
    double **W, **tmp_W;
@@ -207,7 +207,7 @@ double euclidean_distance(double *datapoint1, double *datapoint2, int num_of_coo
 }
 
 
-void free_matrix(double** matrix, int num_of_rows){
+void free_matrix(double** matrix, int num_of_rows){ /* Free memory of a matrix*/
    int i;
    for(i=0; i<num_of_rows; i++){
       free(matrix[i]);
@@ -350,7 +350,7 @@ double** symnmf_c(double** H, double** W, int N, int k){
 }
 
 
-double** allocate_matrix(int rows, int cols, int command){ // command == 0 we do calloc, otherwise malloc 
+double** allocate_matrix(int rows, int cols, int command){ /*Allocate memory, command == 0  means calloc, otherwise malloc */
    int i;
    double** result = (double**)malloc(rows * sizeof(double*));
    if (!result){
