@@ -30,6 +30,7 @@ int main(int argc, char* argv[]){
    int N;
    double** X = NULL; /* X is the datapoints array*/
    double** result; /* result is the output*/
+   (void)argc;
    if (initialize(&X, &num_of_coordinates, &N, filepath) != 0){ 
         printf("An Error Has Occurred");
         return 1;
