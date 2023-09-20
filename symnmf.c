@@ -228,7 +228,6 @@ void print_matrix(double** matrix, int num_of_rows, int num_of_columns){
       }
       printf("\n");
    }
-   printf("\n");
 }
 
 

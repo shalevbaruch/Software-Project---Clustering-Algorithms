@@ -39,7 +39,7 @@ def print_result(centroidsArray):
     for centroid in centroidsArray:
         line = ",".join("%.4f" % coord for coord in centroid)
         print(line)
-    print("")
+    # print("")
 
 
 def readVectors(fileName):
